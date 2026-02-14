@@ -34,8 +34,16 @@ export default function PublicItemPage() {
 
   const { product, ownerWhatsapp } = data;
   const isLost = product.status === "lost";
-  
-  const whatsappUrl = `https://wa.me/${ownerWhatsapp}?text=${encodeURIComponent(
+
+  // ✅ CLEAN PHONE NUMBER (FIXED PART)
+  const cleanNumber = ownerWhatsapp?.replace(/\D/g, "") || "";
+
+  // Optional safety check
+  if (!cleanNumber) {
+    console.error("Invalid WhatsApp number:", ownerWhatsapp);
+  }
+
+  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(
     `Hi, I found your ${product.name}.`
   )}`;
 
@@ -55,10 +63,13 @@ export default function PublicItemPage() {
         </div>
 
         <Card className="border-0 shadow-2xl overflow-hidden">
+          
           {/* Status Banner */}
-          <div className={`py-4 px-6 text-center font-bold text-white flex items-center justify-center gap-2 ${
-            isLost ? 'bg-destructive' : 'bg-green-600'
-          }`}>
+          <div
+            className={`py-4 px-6 text-center font-bold text-white flex items-center justify-center gap-2 ${
+              isLost ? "bg-destructive" : "bg-green-600"
+            }`}
+          >
             {isLost ? (
               <>
                 <AlertTriangle className="w-5 h-5 fill-white/20" />
@@ -73,21 +84,28 @@ export default function PublicItemPage() {
           </div>
 
           <CardHeader className="text-center pt-8 pb-4">
-            <h1 className="text-3xl font-display font-bold text-foreground">{product.name}</h1>
+            <h1 className="text-3xl font-display font-bold text-foreground">
+              {product.name}
+            </h1>
             <p className="text-sm font-medium text-primary uppercase tracking-wider mt-1">
               {product.category}
             </p>
           </CardHeader>
 
           <CardContent className="space-y-6 pb-8 px-8">
+            
             <div className="bg-muted/50 p-4 rounded-xl text-center text-muted-foreground italic">
               "{product.description || "No specific description provided."}"
             </div>
 
             {product.reward && (
               <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl p-4 text-center">
-                <p className="text-xs uppercase font-bold text-amber-600 dark:text-amber-400 mb-1">Reward if found</p>
-                <p className="text-lg font-bold text-amber-800 dark:text-amber-200">{product.reward}</p>
+                <p className="text-xs uppercase font-bold text-amber-600 dark:text-amber-400 mb-1">
+                  Reward if found
+                </p>
+                <p className="text-lg font-bold text-amber-800 dark:text-amber-200">
+                  {product.reward}
+                </p>
               </div>
             )}
 
@@ -97,12 +115,16 @@ export default function PublicItemPage() {
               <p className="text-center text-sm text-muted-foreground">
                 Found this item? Please contact the owner securely via WhatsApp.
               </p>
-              
-              <Button 
+
+              <Button
                 className="w-full h-12 text-lg font-bold shadow-lg shadow-green-500/20 hover:shadow-green-500/30 hover:-translate-y-0.5 transition-all bg-[#25D366] hover:bg-[#20bd5a] text-white border-0"
                 asChild
               >
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <MessageCircle className="mr-2 h-5 w-5 fill-current" />
                   Contact Owner
                 </a>
